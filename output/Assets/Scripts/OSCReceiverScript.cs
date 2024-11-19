@@ -117,7 +117,7 @@ public class ReceiverScript : MonoBehaviour
         transmitter.RemotePort = outputPort;
         transmitter.Connect();
 
-        Debug.Log("Connected to input: " + transmitter.RemoteHost + ":" + transmitter.RemotePort);
+        Debug.Log("Sending to input: " + transmitter.RemoteHost + ":" + transmitter.RemotePort);
         transmitter.Send(new OSCMessage("/connect"));
 
         transmitter.enabled = false;
