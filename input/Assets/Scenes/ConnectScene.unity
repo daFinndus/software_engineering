@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 97284710}
   m_Layer: 5
   m_Name: Local Port Input
-  m_TagString: Untagged
+  m_TagString: Input Port
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -350,7 +350,7 @@ GameObject:
   - component: {fileID: 351508363}
   m_Layer: 5
   m_Name: Controller Port Input
-  m_TagString: Untagged
+  m_TagString: Controller Port
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -701,7 +701,7 @@ MonoBehaviour:
   _closeOnPause: 0
   _mapBundle: {fileID: 0}
   _workInEditor: 0
-  _localHostMode: 0
+  _localHostMode: 1
   _localHost: 192.168.0.103
   _localPort: 7001
 --- !u!1 &519420028
@@ -809,7 +809,7 @@ GameObject:
   - component: {fileID: 611476500}
   m_Layer: 5
   m_Name: Text (Legacy)
-  m_TagString: Input Port
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -888,7 +888,7 @@ GameObject:
   - component: {fileID: 779058124}
   m_Layer: 5
   m_Name: Text (Legacy)
-  m_TagString: Controller IP
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1205,7 +1205,7 @@ GameObject:
   - component: {fileID: 1520924872}
   m_Layer: 5
   m_Name: Local IP Input
-  m_TagString: Untagged
+  m_TagString: Input IP
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1537,7 +1537,7 @@ GameObject:
   - component: {fileID: 1760248939}
   m_Layer: 5
   m_Name: Controller IP Input
-  m_TagString: Untagged
+  m_TagString: Controller IP
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1761,7 +1761,7 @@ GameObject:
   - component: {fileID: 1809634083}
   m_Layer: 5
   m_Name: Text (Legacy)
-  m_TagString: Controller Port
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1840,7 +1840,7 @@ GameObject:
   - component: {fileID: 1999892780}
   m_Layer: 5
   m_Name: Text (Legacy)
-  m_TagString: Input IP
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

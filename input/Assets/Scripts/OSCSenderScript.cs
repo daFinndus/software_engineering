@@ -14,11 +14,13 @@ public class SenderScript : MonoBehaviour
     private string outputIP = "";
     private int outputPort = 13574;
 
-    private Text ipInput;
-    private Text portInput;
+    private InputField ipInput;
+    private Text placeholder;
 
-    private Text ipController;
-    private Text portController;
+    private InputField portInput;
+
+    private InputField ipController;
+    private InputField portController;
 
     private Text debug;
 
@@ -36,8 +38,11 @@ public class SenderScript : MonoBehaviour
         receiver.LocalPort = inputPort;
         Debug.Log("Receiver is listening on port: " + receiver.LocalPort);
 
-        ipInput.text = "This is your local ip: " + GetLocalIPAddress();
+        placeholder.text = "This is your local ip: " + GetLocalIPAddress();
         Debug.Log("Set input IP to: " + GetLocalIPAddress());
+
+        // Set default ip
+        inputIP = GetLocalIPAddress();
     }
 
     /// <summary>
@@ -46,10 +51,11 @@ public class SenderScript : MonoBehaviour
     private void DeclareComponents()
     {
         // Declare the input and text fields for the osc connection
-        ipInput = GameObject.FindGameObjectWithTag("Input IP").GetComponent<Text>();
-        portInput = GameObject.FindGameObjectWithTag("Input Port").GetComponent<Text>();
-        ipController = GameObject.FindGameObjectWithTag("Controller IP").GetComponent<Text>();
-        portController = GameObject.FindGameObjectWithTag("Controller Port").GetComponent<Text>();
+        ipInput = GameObject.FindGameObjectWithTag("Input IP").GetComponent<InputField>();
+        placeholder = ipInput.placeholder.GetComponent<Text>();
+        portInput = GameObject.FindGameObjectWithTag("Input Port").GetComponent<InputField>();
+        ipController = GameObject.FindGameObjectWithTag("Controller IP").GetComponent<InputField>();
+        portController = GameObject.FindGameObjectWithTag("Controller Port").GetComponent<InputField>();
 
         // Declare the debug text field
         debug = GameObject.FindGameObjectWithTag("Debug").GetComponent<Text>();
@@ -57,6 +63,9 @@ public class SenderScript : MonoBehaviour
         // Declare the transmitter and receiver for the osc connection
         transmitter = GetComponent<extOSC.OSCTransmitter>();
         receiver = GetComponent<extOSC.OSCReceiver>();
+
+        // This has to be custom to set the local ip address
+        receiver.LocalHostMode = OSCLocalHostMode.Custom;
     }
 
     /// <summary>
@@ -86,21 +95,28 @@ public class SenderScript : MonoBehaviour
             transmitter.RemotePort = outputPort;
             transmitter.Connect();
 
-            Debug.Log($"Listening on port: {receiver.LocalPort}");
-
             // Send initial message to connect to receiver
-            if (!string.IsNullOrEmpty(ipInput.text)) {
+            if (!string.IsNullOrEmpty(ipInput.text))
+            {
+                Debug.Log("Setting input IP to: " + ipInput.text);
                 inputIP = ipInput.text;
                 receiver.LocalHost = inputIP;
             }
 
             if (!string.IsNullOrEmpty(portInput.text))
             {
+                Debug.Log("Setting input port to: " + portInput.text);
                 inputPort = int.Parse(portInput.text);
                 receiver.LocalPort = inputPort;
             }
 
+            // Disable and re-enable the receiver to apply the new settings
+            receiver.enabled = false;
+            receiver.enabled = true;
+
             Debug.Log($"Sending message to {outputIP}:{outputPort}");
+
+            Debug.Log($"Sending message with input IP: {inputIP} and input port: {inputPort}");
             OSCMessage message = new("/connect");
             message.AddValue(OSCValue.String(inputIP));
             message.AddValue(OSCValue.Int(inputPort));
@@ -134,8 +150,7 @@ public class SenderScript : MonoBehaviour
         try
         {
             receiver.enabled = true;
-
-            Debug.Log("Listening for message from output.");
+            Debug.Log($"Listening on port: {receiver.LocalHost}:{receiver.LocalPort}");
 
             // Generic listener for the connect address
             receiver.Bind("/connect", Connect);
