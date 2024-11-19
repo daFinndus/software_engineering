@@ -74,8 +74,6 @@ public class ReceiverScript : MonoBehaviour
             // Generic listener for debugging
             receiver.Bind("/*", MessageReceived);
             receiver.Bind("/connect", Connect);
-
-            ipInput.text = "Local IP Address: " + receiver.LocalHost;
         }
         catch
         {
