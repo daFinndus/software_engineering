@@ -3,14 +3,30 @@ using System;
 using extOSC;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Net;
 
 public class ReceiverScript : MonoBehaviour
 {
     private int receivePort = 13575;
+
+    Text address;
+    Text messages;
+
+    OSCReceiver receiver;
+
+    public void Start()
+    {
+        address = GameObject.FindGameObjectWithTag("Internet Address").GetComponent<Text>();
+        address.text = "";
+
+        receiver = gameObject.GetComponent<OSCReceiver>();
+        address.text = "Local IP Address: " + receiver.LocalHost;
+    }
+
     public void ConnectToOSCReceiver()
     {
-        var messages = GameObject.FindGameObjectWithTag("Messages").GetComponent<Text>().text = "";
-        var receiver = gameObject.GetComponent<OSCReceiver>() ?? gameObject.AddComponent<OSCReceiver>();
+        messages = GameObject.FindGameObjectWithTag("Messages").GetComponent<Text>();
+        messages.text = "";
 
         receiver.LocalPort = receivePort;
         receiver.enabled = true;
@@ -26,8 +42,8 @@ public class ReceiverScript : MonoBehaviour
 
         Debug.Log("Received a message for address: " + message.Address);
 
-        var messages = GameObject.FindGameObjectWithTag("Messages");
+        Text messages = GameObject.FindGameObjectWithTag("Messages").GetComponent<Text>();
 
-        messages.GetComponent<Text>().text += message;
+        messages.text += message;
     }
 }
