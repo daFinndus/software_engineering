@@ -77,12 +77,6 @@ public class SenderScript : MonoBehaviour
                 outputPort = int.Parse(portController.text);
             }
 
-            if (!string.IsNullOrEmpty(portInput.text))
-            {
-                inputPort = int.Parse(portInput.text);
-                receiver.LocalPort = inputPort;
-            }
-
             outputIP = ipController.text;
 
             Debug.Log($"Connecting to {outputIP}:{outputPort}");
@@ -94,6 +88,12 @@ public class SenderScript : MonoBehaviour
             Debug.Log($"Listening on port: {receiver.LocalPort}");
 
             // Send initial message to connect to receiver
+            if (!string.IsNullOrEmpty(portInput.text))
+            {
+                inputPort = int.Parse(portInput.text);
+                receiver.LocalPort = inputPort;
+            }
+
             Debug.Log($"Sending message to {outputIP}:{outputPort}");
             OSCMessage message = new("/connect");
             message.AddValue(OSCValue.String(GetLocalIPAddress()));
@@ -125,12 +125,19 @@ public class SenderScript : MonoBehaviour
     /// </summary>
     private void ConnectToOutput()
     {
-        receiver.enabled = true;
+        try
+        {
+            receiver.enabled = true;
 
-        Debug.Log("Listening for message from output.");
+            Debug.Log("Listening for message from output.");
 
-        // Generic listener for the connect address
-        receiver.Bind("/connect", Connect);
+            // Generic listener for the connect address
+            receiver.Bind("/connect", Connect);
+        }
+        catch
+        {
+            HandleError("Error while connecting to output.");
+        }
     }
 
     /// <summary>
