@@ -162,6 +162,12 @@ public class SenderScript : MonoBehaviour
         {
             if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && !IPAddress.IsLoopback(ip))
             {
+                byte[] bytes = ip.GetAddressBytes();
+                if (bytes[0] == 169 && bytes[1] == 254)
+                {
+                    // Skip APIPA addresses
+                    continue;
+                }
                 return ip.ToString();
             }
         }
