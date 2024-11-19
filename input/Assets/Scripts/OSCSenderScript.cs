@@ -1,3 +1,4 @@
+using System.Net;
 using extOSC;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -152,7 +153,7 @@ public class SenderScript : MonoBehaviour
         var host = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName());
         foreach (var ip in host.AddressList)
         {
-            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && !IPAddress.IsLoopback(ip))
             {
                 return ip.ToString();
             }
