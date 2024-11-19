@@ -8,6 +8,7 @@ public class SenderScript : MonoBehaviour
 {
     // Input port describes the port that the input uses to receive messages
     // Output port describes the port that the input uses to send messages to
+    private string inputIP = "";
     private int inputPort = 13576;
 
     private string outputIP = "";
@@ -88,6 +89,11 @@ public class SenderScript : MonoBehaviour
             Debug.Log($"Listening on port: {receiver.LocalPort}");
 
             // Send initial message to connect to receiver
+            if (!string.IsNullOrEmpty(ipInput.text)) {
+                inputIP = ipInput.text;
+                receiver.LocalHost = inputIP;
+            }
+
             if (!string.IsNullOrEmpty(portInput.text))
             {
                 inputPort = int.Parse(portInput.text);
@@ -171,7 +177,8 @@ public class SenderScript : MonoBehaviour
                 return ip.ToString();
             }
         }
-        throw new System.Exception("No network adapters with an IPv4 address in the system!");
+        Debug.Log("There is no IPv4 network adapter in the system.");
+        return "X.X.X.X";
     }
 
     /// <summary>
