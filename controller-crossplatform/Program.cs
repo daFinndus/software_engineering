@@ -4,7 +4,7 @@ class Program
 {
     static void Main()
     {
-        List<string> addresses = LocalIP.GetLocalIPAdress();
+        List<string> addresses = LocalIP.GetLocalIPAddress();
         DisplayWelcomeMessage();
         DisplayLocalIPs(addresses);
 

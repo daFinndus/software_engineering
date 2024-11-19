@@ -8,6 +8,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ConnectScene.unity
     guid: 7c5a8d64d97c045508351f15fdc1b96f
+  - enabled: 1
+    path: Assets/Scenes/GyroScene.unity
+    guid: 2f6e8b7af43e3f6438280bc0625092dd
   m_configObjects:
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 5708ab17e746c384e8cca694930c29e0, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 339167213fcc1764b8b8c24d2a4e4ba2, type: 2}

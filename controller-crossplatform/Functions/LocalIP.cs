@@ -12,7 +12,7 @@ namespace controller_crossplatform.Functions
         /// This function gets the local IP address of the computer.
         /// </summary>
         /// <returns>A list of ip adresses.</returns>
-        public static List<string> GetLocalIPAdress()
+        public static List<string> GetLocalIPAddress()
         {
             List<string> localIPs = new List<string>();
             var host = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName());

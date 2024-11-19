@@ -5,7 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Messages
-  - Internet Address
+  - IP Input
+  - Port Input
+  - Debug
   layers:
   - Default
   - TransparentFX

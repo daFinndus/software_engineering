@@ -4,7 +4,11 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Internet Address
+  - Debug
+  - Controller IP
+  - Controller Port
+  - Input IP
+  - Input Port
   layers:
   - Default
   - TransparentFX

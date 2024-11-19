@@ -18,17 +18,9 @@ namespace controller_crossplatform.Functions
             else
             {
                 // Implement conversion logic here
-                Console.WriteLine("Converting message for output.");
-
-                message = new OscMessage("/output");
-
-                message.Arguments.Add("Converted for output");
 
                 // I don't know how to send arrays with SharpOSC yet
                 // This might be helpful https://github.com/ValdemarOrn/SharpOSC/blob/master/SharpOSC/OscMessage.cs
-                message.Arguments.Add(9);
-                message.Arguments.Add(7);
-                message.Arguments.Add(5);
             }
 
             return message;

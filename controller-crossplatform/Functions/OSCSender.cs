@@ -8,9 +8,17 @@ using SharpOSC;
 
 namespace controller_crossplatform.Functions
 {
-    internal class OSCSender(string receiverIP, int senderPort)
+    /// <summary>
+    /// This is the class that sends the OSC messages to the receiver.
+    /// </summary>
+    /// <param name="ip">Local IP Address of the receiver.</param>
+    /// <param name="port">Port of the receiver.</param>
+    internal class OSCSender(string ip, int port)
     {
-        private SharpOSC.UDPSender? sender;
+        protected SharpOSC.UDPSender? sender;
+
+        public string receiverIP = ip;
+        public int receiverPort = port;
 
         /// <summary>
         /// This function sends a message to the receiver, in this case the output system.
@@ -22,7 +30,7 @@ namespace controller_crossplatform.Functions
             message = OSCFunctions.ConvertMessage(message);
             OSCFunctions.LogMessage(message);
 
-            sender = new SharpOSC.UDPSender(receiverIP, senderPort);
+            sender = new SharpOSC.UDPSender(receiverIP, receiverPort);
             sender.Send(message);
         }
     }
