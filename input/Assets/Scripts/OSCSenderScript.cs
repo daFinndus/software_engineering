@@ -102,7 +102,7 @@ public class SenderScript : MonoBehaviour
 
             Debug.Log($"Sending message to {outputIP}:{outputPort}");
             OSCMessage message = new("/connect");
-            message.AddValue(OSCValue.String(GetLocalIPAddress()));
+            message.AddValue(OSCValue.String(inputIP));
             message.AddValue(OSCValue.Int(inputPort));
             transmitter.Send(message);
 
