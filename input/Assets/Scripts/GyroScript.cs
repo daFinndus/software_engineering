@@ -6,13 +6,20 @@ using UnityEngine;
 public class GyroScript : MonoBehaviour
 {
     private OSCTransmitter transmitter;
+    private OSCReceiver receiver;
+
     private bool buttonPressed = false;
 
     // Start is called before the first frame update
     public void Start()
     {
         transmitter = GameObject.Find("OSCTransmitter").GetComponent<OSCTransmitter>();
+        receiver = GameObject.Find("OSCTransmitter").GetComponent<OSCReceiver>();
+
         Debug.Log($"Transmitter is {transmitter.RemoteHost}:{transmitter.RemotePort}");
+        Debug.Log($"Receiver is {receiver.LocalHost}:{receiver.LocalPort}");
+
+        Destroy(receiver);
 
         Input.gyro.enabled = true;
         Debug.Log("\nGyro is now enabled!");

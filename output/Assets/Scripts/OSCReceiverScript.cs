@@ -4,32 +4,35 @@ using extOSC;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Net;
+using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
+using System.Threading;
 
 public class ReceiverScript : MonoBehaviour
 {
     // Input port describes the port that the output uses to receive messages
     private int inputPort = 13575;
 
-    Text ipInput;
-    Text portInput;
-
-    Text debug;
-    Text messages;
-
-    private OSCReceiver receiver;
-    private OSCTransmitter transmitter;
+    private Text ipInput;
+    private Text portInput;
 
     private string outputIP;
     private int outputPort;
 
+    private bool connected = false;
+
+    private Text debug;
+    private Text messages;
+
+    private OSCReceiver receiver;
+    private OSCTransmitter transmitter;
+
+
     public void Start()
     {
         DeclareComponents();
-
-        // This is to prevent conflict errors
-        receiver.LocalPort = inputPort;
-
-        ipInput.text = "This is your local ip: " + GetLocalIPAddress();
+        InitializeReceiver();
+        DisplayLocalIPAdress();
     }
 
     /// <summary>
@@ -48,6 +51,31 @@ public class ReceiverScript : MonoBehaviour
         // Declare the transmitter and receiver for the osc connection
         transmitter = gameObject.GetComponent<OSCTransmitter>();
         receiver = gameObject.GetComponent<OSCReceiver>();
+
+        Debug.Log("Declared all components successfully.");
+    }
+
+    /// <summary>
+    /// This function initializes the receiver for the osc connection.
+    /// </summary>
+    private void InitializeReceiver()
+    {
+        receiver.enabled = false;
+        receiver.LocalPort = inputPort;
+
+        // Generic listener
+        receiver.Bind("/*", MessageReceived);
+        receiver.Bind("/connect", Connect);
+
+        Debug.Log("The receiver is initialized.");
+    }
+
+    /// <summary>
+    /// This function displays the local ip address of the system.
+    /// </summary>
+    private void DisplayLocalIPAdress()
+    {
+        ipInput.text = $"This is your local IP: {GetLocalIPAddress()}";
     }
 
     /// <summary>
@@ -58,22 +86,17 @@ public class ReceiverScript : MonoBehaviour
     {
         try
         {
-            if (portInput.text != "")
+            if (int.TryParse(portInput.text, out int parsedPort))
             {
-                inputPort = Int32.Parse(portInput.text);
+                Debug.Log("Successfully parsed the port.");
+                inputPort = parsedPort;
                 receiver.LocalPort = inputPort;
             }
 
-            messages = GameObject.FindGameObjectWithTag("Messages").GetComponent<Text>();
-            messages.text = "";
-
+            ClearMessages();
             receiver.enabled = true;
 
-            Debug.Log("Listening on port: " + receiver.LocalPort);
-
-            // Generic listener for debugging
-            receiver.Bind("/*", MessageReceived);
-            receiver.Bind("/connect", Connect);
+            Debug.Log($"Listening on port: {receiver.LocalPort}");
         }
         catch
         {
@@ -87,10 +110,7 @@ public class ReceiverScript : MonoBehaviour
     /// <param name="message">The osc message.</param>
     protected void MessageReceived(OSCMessage message)
     {
-        Debug.Log("Received a message for address: " + message.Address);
-
-        Text messages = GameObject.FindGameObjectWithTag("Messages").GetComponent<Text>();
-
+        Debug.Log($"Received message for address: {message.Address}");
         messages.text = message.ToString();
     }
 
@@ -103,15 +123,15 @@ public class ReceiverScript : MonoBehaviour
         Debug.Log("Successfully connected to the controller.");
 
         outputIP = message.Values[0].StringValue;
-        outputPort = (int)message.Values[1].IntValue;
+        outputPort = message.Values[1].IntValue;
 
-        ConnectToInput();
+        InitializeTransmitter();
     }
 
     /// <summary>
-    /// This function sends one message to the input to initialize the connection.
+    /// Initializes the transmitter for the osc connection and sends a message to the input.
     /// </summary>
-    private void ConnectToInput()
+    private void InitializeTransmitter()
     {
         transmitter.RemoteHost = outputIP;
         transmitter.RemotePort = outputPort;
@@ -121,6 +141,37 @@ public class ReceiverScript : MonoBehaviour
         transmitter.Send(new OSCMessage("/connect"));
 
         transmitter.enabled = false;
+        StartCoroutine(WaitForInput());
+    }
+
+    /// <summary>
+    /// This function listens to /gyro messages from the input.
+    /// If it receives one it changes the scene to the GyroScene.
+    /// </summary>
+    /// <summary> Waits for /gyro messages to establish the connection. </summary>
+    private System.Collections.IEnumerator WaitForInput()
+    {
+        if (!connected)
+        {
+            receiver.Bind("/start", message =>
+            {
+                Debug.Log("Received the startup message.");
+                connected = true;
+
+                ChangeScene();
+            });
+            yield return null; // Wait for the next frame
+        }
+    }
+
+    /// <summary>
+    /// This function changes the scene to the GyroScene.
+    /// It also transfers the current OSCTransmitter object.
+    /// </summary>
+    private void ChangeScene()
+    {
+        SceneManager.LoadScene("BowlingScene");
+        DontDestroyOnLoad(receiver);
     }
 
     /// <summary>
@@ -149,5 +200,13 @@ public class ReceiverScript : MonoBehaviour
     {
         Debug.LogError(error);
         debug.text = error;
+    }
+
+    /// <summary> 
+    /// Clears the messages text field. 
+    /// </summary>
+    private void ClearMessages()
+    {
+        messages.text = string.Empty;
     }
 }

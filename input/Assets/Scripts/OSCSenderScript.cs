@@ -145,6 +145,12 @@ public class SenderScript : MonoBehaviour
         Debug.Log("Connection is initialized.");
         receiver.enabled = false;
 
+        // Send initial message to start the game
+        message = new("/start");
+        message.AddValue(OSCValue.Int(0));
+        transmitter.Send(message);
+        Debug.Log($"Going to send {message}!");
+
         ChangeScene();
     }
 

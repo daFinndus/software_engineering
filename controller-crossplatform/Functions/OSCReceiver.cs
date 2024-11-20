@@ -28,7 +28,8 @@ namespace controller_crossplatform.Functions
 
             while (true)
             {
-                var packet = listener.Receive();
+                var packet = (OscMessage)listener.Receive();
+
                 if (packet is OscMessage message)
                 {
                     Console.WriteLine("\nReceived a message for address: " + message.Address);

@@ -8,6 +8,7 @@ TagManager:
   - IP Input
   - Port Input
   - Debug
+  - Bowling
   layers:
   - Default
   - TransparentFX
