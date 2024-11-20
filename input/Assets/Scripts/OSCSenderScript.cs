@@ -214,8 +214,11 @@ public class SenderScript : MonoBehaviour
                 if (bytes[0] == 169 && bytes[1] == 254)
                 {
                     // Skip APIPA addresses
+                    Debug.Log("APIPA address detected: " + ip.ToString());
                     continue;
                 }
+
+                Debug.Log("Found Local IP: " + ip.ToString());
                 return ip.ToString();
             }
         }
