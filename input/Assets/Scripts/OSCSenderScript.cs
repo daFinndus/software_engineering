@@ -30,24 +30,8 @@ public class SenderScript : MonoBehaviour
     public void Start()
     {
         DeclareComponents();
-
-        // This is to prevent conflict errors
-        transmitter.RemotePort = outputPort;
-        Debug.Log("Transmitter is sending to port: " + transmitter.RemotePort);
-
-        receiver.LocalPort = inputPort;
-        Debug.Log("Receiver is listening on port: " + receiver.LocalPort);
-
-        placeholder.text = "This is your local ip: " + GetLocalIPAddress();
-        Debug.Log("Set input IP to: " + GetLocalIPAddress());
-
-        // Set default ip
-        inputIP = GetLocalIPAddress();
-
-        if (inputIP != "X.X.X.X")
-        {
-            receiver.LocalHost = GetLocalIPAddress();
-        }
+        InitializeTransmitter();
+        SetLocalIP();
     }
 
     /// <summary>
@@ -64,7 +48,10 @@ public class SenderScript : MonoBehaviour
 
         // Declare the debug text field
         debug = GameObject.FindGameObjectWithTag("Debug").GetComponent<Text>();
+    }
 
+    private void InitializeTransmitter()
+    {
         // Declare the transmitter and receiver for the osc connection
         transmitter = GetComponent<extOSC.OSCTransmitter>();
         receiver = GetComponent<extOSC.OSCReceiver>();
@@ -72,6 +59,34 @@ public class SenderScript : MonoBehaviour
 
         // This has to be custom to set the local ip address
         receiver.LocalHostMode = OSCLocalHostMode.Custom;
+
+        // This is to prevent conflict errors
+        transmitter.RemotePort = outputPort;
+        Debug.Log("Transmitter is sending to port: " + transmitter.RemotePort);
+
+        receiver.LocalPort = inputPort;
+        Debug.Log("Receiver is listening on port: " + receiver.LocalPort);
+    }
+
+    private void SetLocalIP()
+    {
+        string ip = GetLocalIPAddress();
+
+        if (string.IsNullOrEmpty(ip))
+        {
+            placeholder.text = "No network adapters were found.";
+            inputIP = "";
+
+            receiver.LocalHost = "127.0.0.1";
+        }
+        else
+        {
+            placeholder.text = "This is your local ip: " + ip;
+            Debug.Log("Set input IP to: " + ip);
+            inputIP = ip;
+
+            receiver.LocalHost = ip;
+        }
     }
 
     /// <summary>
@@ -201,13 +216,12 @@ public class SenderScript : MonoBehaviour
                     // Skip APIPA addresses
                     continue;
                 }
-
                 return ip.ToString();
             }
         }
 
         Debug.Log("There is no IPv4 network adapter in the system.");
-        return "X.X.X.X";
+        return "";
     }
 
     /// <summary>
