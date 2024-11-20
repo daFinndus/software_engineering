@@ -43,6 +43,11 @@ public class SenderScript : MonoBehaviour
 
         // Set default ip
         inputIP = GetLocalIPAddress();
+
+        if (inputIP != "X.X.X.X")
+        {
+            receiver.LocalHost = GetLocalIPAddress();
+        }
     }
 
     /// <summary>
@@ -63,6 +68,7 @@ public class SenderScript : MonoBehaviour
         // Declare the transmitter and receiver for the osc connection
         transmitter = GetComponent<extOSC.OSCTransmitter>();
         receiver = GetComponent<extOSC.OSCReceiver>();
+        receiver.enabled = false;
 
         // This has to be custom to set the local ip address
         receiver.LocalHostMode = OSCLocalHostMode.Custom;
@@ -189,9 +195,11 @@ public class SenderScript : MonoBehaviour
                     // Skip APIPA addresses
                     continue;
                 }
+
                 return ip.ToString();
             }
         }
+
         Debug.Log("There is no IPv4 network adapter in the system.");
         return "X.X.X.X";
     }
