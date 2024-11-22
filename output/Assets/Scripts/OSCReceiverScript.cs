@@ -1,12 +1,7 @@
-using System.Collections.Generic;
-using System;
 using extOSC;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Net;
 using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
-using System.Threading;
 
 public class ReceiverScript : MonoBehaviour
 {
@@ -189,6 +184,7 @@ public class ReceiverScript : MonoBehaviour
                 return ip.ToString();
             }
         }
+
         throw new System.Exception("No network adapters with an IPv4 address in the system!");
     }
 

@@ -238,11 +238,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 167436242}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d12692c293a4fd349b79810c1654c513, type: 3}
+  m_Script: {fileID: 11500000, guid: 0f098c448398f4824a38bd8da6848539, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gyroTimeout: 0.5
+  gyroTimeout: 0.15
   gyroMultiplier: 10
+  forceMultiplier: 0.5
 --- !u!54 &167436248
 Rigidbody:
   m_ObjectHideFlags: 0

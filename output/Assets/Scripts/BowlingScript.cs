@@ -1,18 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using extOSC;
-using Unity.VisualScripting;
-using UnityEditor.VersionControl;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class BowlingScript : MonoBehaviour
 {
     // This is all for the osc receiver
     private OSCReceiver receiverComponent;
     private GameObject receiverObject;
-
     private OSCReceiver receiverBowling;
 
     private string inputIP;
@@ -34,7 +27,7 @@ public class BowlingScript : MonoBehaviour
     private float lastGyroTime;
     private float previousGyroTime;
 
-    public float gyroTimeout = 0.15f;   
+    public float gyroTimeout = 0.15f;
     public float gyroMultiplier = 10f;
     public float forceMultiplier = 0.5f;
 
