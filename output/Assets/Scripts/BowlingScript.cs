@@ -43,11 +43,16 @@ public class BowlingScript : MonoBehaviour
     /// </summary>
     private void DeclareComponents()
     {
-        bowlingPosition = GameObject.Find("Bowling").GetComponent<Transform>();
-        bowlingRigidbody = GameObject.Find("Bowling").GetComponent<Rigidbody>();
+        bowlingPosition = GetComponent<Transform>();
+        bowlingRigidbody = GetComponent<Rigidbody>();
 
         initialPosition = bowlingPosition.position;
         initialRotation = bowlingPosition.rotation;
+
+        if (bowlingRigidbody == null || bowlingPosition == null)
+        {
+            Debug.LogError("Bowling Rigidbody or Transform is not set!");
+        }
     }
 
     /// <summary>
@@ -66,6 +71,7 @@ public class BowlingScript : MonoBehaviour
         inputPort = receiverComponent.LocalPort;
 
         Destroy(receiverObject);
+        Debug.Log("Destroyed the old receiver.");
 
         receiverBowling = GameObject.Find("OSCReceiver Bowling").GetComponent<OSCReceiver>();
         receiverBowling.LocalHostMode = OSCLocalHostMode.Custom;
@@ -97,9 +103,9 @@ public class BowlingScript : MonoBehaviour
     private void HandleGyro(OSCMessage message)
     {
         // Extract gyro data
-        float xGyro = message.Values[0].FloatValue * gyroMultiplier;
+        float xGyro = (message.Values[0].FloatValue * gyroMultiplier) + initialPosition.x;
         float yGyro = initialPosition.y;
-        float zGyro = message.Values[2].FloatValue * gyroMultiplier;
+        float zGyro = (message.Values[2].FloatValue * gyroMultiplier) + initialPosition.z;
 
         // Update last and previous gyro time and input
         previousGyroInput = lastGyroInput;
