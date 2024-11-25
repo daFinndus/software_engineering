@@ -122,7 +122,7 @@ public class BowlingScript : MonoBehaviour
     /// </summary>
     public void FixedUpdate()
     {
-        Debug.Log($"The last message was received before {Time.time - lastGyroTime}");
+        //Debug.Log($"The last message was received before {Time.time - lastGyroTime}");
 
         // Check if the ball has been released and the gyro data has timed out
         if (!ballReleased && Time.time - lastGyroTime > gyroTimeout)

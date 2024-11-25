@@ -9,6 +9,7 @@ TagManager:
   - Port Input
   - Debug
   - Bowling
+  - Pin
   layers:
   - Default
   - TransparentFX
