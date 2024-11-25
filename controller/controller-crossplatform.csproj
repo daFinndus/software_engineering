@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <Reference Include="SharpOSC">
-      <HintPath>..\..\..\Verschiedenes\software_engineering\libraries\SharpOSC\v0.1.1.0\Release\SharpOSC.dll</HintPath>
+      <HintPath>..\libraries\SharpOSC\v0.1.1.0\Release\SharpOSC.dll</HintPath>
     </Reference>
   </ItemGroup>
 
