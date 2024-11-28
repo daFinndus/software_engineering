@@ -1,5 +1,6 @@
 using extOSC;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// This class is responsible for sending the gyro attitude values to the server.
@@ -10,6 +11,8 @@ public class Gyro : MonoBehaviour
     private OSCTransmitter transmitter;
 
     private bool buttonPressed = false;
+
+    private Quaternion initialGyroAttitude;
 
     void Start()
     {
@@ -34,6 +37,9 @@ public class Gyro : MonoBehaviour
         Input.gyro.enabled = true;
         Input.gyro.updateInterval = 0.01f;
         Debug.Log("\nGyro is now enabled!");
+
+        // Set initial attitude - important for recalibration
+        initialGyroAttitude = Input.gyro.attitude;
     }
 
     void Update()
@@ -43,7 +49,7 @@ public class Gyro : MonoBehaviour
             float[] values = GetGyro();
 
             OSCMessage message = new("/gyro");
-            
+
             foreach (var value in values)
             {
                 message.AddValue(OSCValue.Float(value));
@@ -81,10 +87,13 @@ public class Gyro : MonoBehaviour
     /// <returns>An array of gyro values.</returns>
     public float[] GetGyro()
     {
-        float x = Input.gyro.attitude.x;
-        float y = Input.gyro.attitude.y;
-        float z = Input.gyro.attitude.z;
-        float w = Input.gyro.attitude.w;
+        // Get the current attitude with the initial attitude
+        Quaternion currentAttitude = Input.gyro.attitude * Quaternion.Inverse(initialGyroAttitude);
+
+        float x = currentAttitude.x;
+        float y = currentAttitude.y;
+        float z = currentAttitude.z;
+        float w = currentAttitude.w;
 
         float rotationX = Input.gyro.rotationRate.x;
         float rotationY = Input.gyro.rotationRate.y;
@@ -97,5 +106,22 @@ public class Gyro : MonoBehaviour
         float[] values = { x, y, z, w, rotationX, rotationY, rotationZ, accelerationX, accelerationY, accelerationZ };
 
         return values;
+    }
+
+    /// <summary>
+    /// This function recalibrates the gyro.
+    /// </summary>
+    public void RecalibrateGyro()
+    {
+        initialGyroAttitude = Input.gyro.attitude;
+        Debug.Log("Gyro recalibrated to current orientation.");
+    }
+
+    /// <summary>
+    /// This function changes the scene to the menu.
+    /// </summary>
+    public void ChangeScene()
+    {
+        SceneManager.LoadScene("Menu");
     }
 }

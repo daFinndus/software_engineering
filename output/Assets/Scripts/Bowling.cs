@@ -18,12 +18,12 @@ public class Bowling : MonoBehaviour
 
     private bool ballReleased = false;
 
-    // Gyro data
+    // Gyro data for the bowling ball
     private Vector3 attitude = Vector3.zero;
     private Quaternion rotationRate = new Quaternion(0, 0, 0, 0);
     private Vector3 acceleration = Vector3.zero;
 
-    public float gyroTimeout = 0.15f;
+    // This is for the force and position calculation
     public float gyroMultiplier = 10f;
     public float forceMultiplier = 0.5f;
 
