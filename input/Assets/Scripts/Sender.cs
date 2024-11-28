@@ -94,6 +94,7 @@ public class Sender : MonoBehaviour
     /// </summary>
     private void ChangeScene()
     {
+        DontDestroyOnLoad(transmitter);
         SceneManager.LoadScene("Gyro");
     }
 
