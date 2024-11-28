@@ -4,29 +4,26 @@ using UnityEngine;
 
 public class PinScript : MonoBehaviour
 {
-    // Schwellenwert, ab wann ein Pin als umgefallen gilt
-    [SerializeField] private float fallThreshold = 45.0f; // Winkel in Grad
+    // Threshold for the pin to be considered fallen
+    public float fallThreshold = 45.0f;
     private Vector3 initialPosition;
     private bool isFallen = false;
 
     void Start()
     {
-        // Speichere die Ausgangsrotation des Pins
-        initialPosition = transform.up; // "Up"-Vektor zeigt nach oben
+        initialPosition = transform.up;
     }
 
     void Update()
     {
         if (!isFallen)
         {
-            // Prüfe, ob der Pin umgefallen ist
             CheckIfPinFallen();
         }
     }
 
     private void CheckIfPinFallen()
     {
-        // Berechne den Winkel zwischen der aktuellen Ausrichtung und der ursprünglichen Ausrichtung
         float angle = Vector3.Angle(transform.up, initialPosition);
 
         if (angle > fallThreshold)
@@ -38,15 +35,14 @@ public class PinScript : MonoBehaviour
 
     private void OnPinFall()
     {
-        Debug.Log($"{gameObject.name} ist umgefallen!");
+        Debug.Log($"{gameObject.name} is fallen!");
 
-        // Optional: Markiere den Pin als umgefallen, z. B. für Punktestand
-        ScoreManager.Instance.AddPoints(1);
+        ScoreManager.instance.AddPoints(1);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
-        // Debug-Ausgabe für Kollisionen
-        Debug.Log($"{gameObject.name} wurde getroffen von {collision.gameObject.name}");
+        // Debug statement to check by what the pin was hit
+        Debug.Log($"{gameObject.name} was hit by {collision.gameObject.name}");
     }
 }

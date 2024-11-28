@@ -1,4 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using extOSC;
+using Unity.VisualScripting;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class BowlingScript : MonoBehaviour
@@ -21,17 +25,14 @@ public class BowlingScript : MonoBehaviour
     private bool ballReleased = false;
 
     // Gyro data
-    private Vector3 lastGyroInput = Vector3.zero;
-    private Vector3 previousGyroInput = Vector3.zero;
-
-    private float lastGyroTime;
-    private float previousGyroTime;
+    private Vector3 attitude = Vector3.zero;
+    private Quaternion rotationRate = new Quaternion(0, 0, 0, 0);
+    private Vector3 acceleration = Vector3.zero;
 
     public float gyroTimeout = 0.15f;
     public float gyroMultiplier = 10f;
     public float forceMultiplier = 0.5f;
 
-    // Start is called before the first frame update
     public void Start()
     {
         InitializeReceiver();
@@ -82,7 +83,10 @@ public class BowlingScript : MonoBehaviour
         Debug.Log($"Receiver is {receiverBowling.LocalHost}:{receiverBowling.LocalPort}");
 
         receiverBowling.Bind("/gyro", OnReceive);
+        receiverBowling.Bind("/finish", message => ReleaseBall());
         receiverBowling.enabled = true;
+
+
     }
 
     /// <summary>
@@ -100,41 +104,40 @@ public class BowlingScript : MonoBehaviour
         HandleGyro(message);
     }
 
+    /// <summary>
+    /// This function retrieves the gyro data from the osc message.
+    /// It sorts it into a list and updates the position of the ball.
+    /// </summary>
+    /// <param name="message">The received osc message.</param>
     private void HandleGyro(OSCMessage message)
     {
-        // Extract gyro data
-        float xGyro = (message.Values[0].FloatValue * gyroMultiplier) + initialPosition.x;
-        float yGyro = initialPosition.y;
-        float zGyro = (message.Values[2].FloatValue * gyroMultiplier) + initialPosition.z;
+        List<float> values = message.Values.Select(value => value.FloatValue).ToList();
+        Debug.Log("Successfully received gyro data and filled the list!");
 
-        // Update last and previous gyro time and input
-        previousGyroInput = lastGyroInput;
-        previousGyroTime = lastGyroTime;
+        // Update last gyro data
+        attitude = new Vector3(values[0], values[1], values[2]);
 
-        lastGyroInput = new Vector3(xGyro, 0, 0);
-        lastGyroTime = Time.time;
+        // Save acceleration and rotation values
+        rotationRate = new Quaternion(values[4], values[5], values[6], values[3]);
+        acceleration = new Vector3(values[7], values[8], values[9]);
 
-        UpdatePosition(new Vector3(xGyro, yGyro, zGyro));
-    }
-
-    void UpdatePosition(Vector3 position)
-    {
-        Debug.Log("Going to udpate the position!");
-        bowlingPosition.position = position;
+        UpdatePosition();
     }
 
     /// <summary>
-    /// FixedUpdate checks for release conditions and applies force.
+    /// This function updates the position of the ball.
+    /// It considers the rotation, acceleration and current position of the gyro.
+    /// The ball is then moved accordingly.
     /// </summary>
-    public void FixedUpdate()
+    void UpdatePosition()
     {
-        //Debug.Log($"The last message was received before {Time.time - lastGyroTime}");
+        bowlingPosition.SetPositionAndRotation(new Vector3(
+            initialPosition.x + attitude[0] * gyroMultiplier,
+            initialPosition.y + attitude[1] * gyroMultiplier,
+            initialPosition.z + attitude[2] * gyroMultiplier
+        ), rotationRate);
 
-        // Check if the ball has been released and the gyro data has timed out
-        if (!ballReleased && Time.time - lastGyroTime > gyroTimeout)
-        {
-            ReleaseBall();
-        }
+        Debug.Log("Successfully updated the position of the ball!");
     }
 
     /// <summary>
@@ -144,24 +147,25 @@ public class BowlingScript : MonoBehaviour
     {
         ballReleased = true;
 
-        // Calculate the difference in input and time to the previous message
-        Vector3 deltaInput = lastGyroInput - previousGyroInput;
-        float deltaTime = lastGyroTime - previousGyroTime;
+        // Calculate release force with acceleration
+        Vector3 releaseForce = acceleration * forceMultiplier;
 
-        // If the time difference is zero, set it to a small value
-        if (deltaTime <= 0) deltaTime = 0.01f;
-
-        // Calculate force and velocity
-        Vector3 velocity = deltaInput / deltaTime;
-        Vector3 releaseForce = velocity * forceMultiplier;
+        // Calculate angular velocity with rotation rate
+        Vector3 angularVelocity = new Vector3(rotationRate.x, rotationRate.y, rotationRate.z) * gyroMultiplier;
 
         bowlingRigidbody.isKinematic = false;
         bowlingRigidbody.AddForce(releaseForce, ForceMode.Impulse);
+        bowlingRigidbody.AddTorque(angularVelocity, ForceMode.Impulse);
 
-        Debug.Log($"Throwing the ball with force: {lastGyroInput * 5.0f}");
         Debug.Log($"Ball is released!");
+
+        Debug.Log($"Acceleration: {acceleration}, RotationRate: {rotationRate}");
+        Debug.Log($"Calculated Force: {releaseForce}, Angular Velocity: {angularVelocity}");
     }
 
+    /// <summary>
+    /// Resets the ball to its initial position.
+    /// </summary>
     private void ResetBall()
     {
         ballReleased = false;

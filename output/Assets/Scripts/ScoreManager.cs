@@ -5,36 +5,44 @@ using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour
 {
-    public static ScoreManager Instance; // Singleton-Instanz
-    private int score = 0; // Punktestand
-    public Text scoreText; // Referenz auf das UI-Text-Element
+    public static ScoreManager instance; // Singleton
+    private int score = 0; // Score
+    public Text scoreText; // Reference to the text object
 
     void Awake()
     {
-        if (Instance == null)
+        if (instance == null)
         {
-            Instance = this;
+            instance = this;
         }
         else
         {
-            Destroy(gameObject); // Zerstört doppelte Instanzen
+            Destroy(gameObject);
         }
     }
 
     void Start()
     {
-        UpdateScoreText(); // Initialisiere den Text
+        UpdateScoreText(); 
     }
 
+    /// <summary>
+    /// This function adds points to the score variable.
+    /// Then it updates the score text.
+    /// </summary>
+    /// <param name="points">An integer that will be added to the score.</param>
     public void AddPoints(int points)
     {
-        score += points; // Addiere Punkte
-        UpdateScoreText(); // Aktualisiere die Anzeige
+        score += points; 
+        UpdateScoreText(); 
     }
 
+    /// <summary>
+    /// This function updates the text object based on the score variable.
+    /// </summary>
     public void UpdateScoreText()
     {
-        scoreText.text = "Score: " + score; // Aktualisiere den UI-Text
+        scoreText.text = "Score: " + score; 
     }
 }
 
