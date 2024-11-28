@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using extOSC;
 using UnityEngine;
 
@@ -7,10 +5,9 @@ using UnityEngine;
 /// This class is responsible for sending the gyro attitude values to the server.
 /// It acts as a kind of controller for the gyro values.
 /// </summary>
-public class GyroScript : MonoBehaviour
+public class Gyro : MonoBehaviour
 {
     private OSCTransmitter transmitter;
-    private OSCReceiver receiver;
 
     private bool buttonPressed = false;
 
@@ -21,17 +18,12 @@ public class GyroScript : MonoBehaviour
     }
 
     /// <summary>
-    /// This function initializes the transmitter and receiver.
-    /// It then destroys the receiver used for establishing the connection.
-    /// This step can be skipped if needed.
+    /// This function initializes the transmitter variable.
     /// </summary>
     private void InitializeReceiver()
     {
         transmitter = GameObject.Find("OSCTransmitter").GetComponent<OSCTransmitter>();
-        receiver = GameObject.Find("OSCTransmitter").GetComponent<OSCReceiver>();
-
         Debug.Log($"Transmitter is {transmitter.RemoteHost}:{transmitter.RemotePort}");
-        Debug.Log($"Receiver is {receiver.LocalHost}:{receiver.LocalPort}");
     }
 
     /// <summary>

@@ -1,19 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
-using extOSC;
-using Unity.VisualScripting;
-using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using extOSC;
 
-public class BowlingScript : MonoBehaviour
+public class Bowling : MonoBehaviour
 {
     // This is all for the osc receiver
-    private OSCReceiver receiverComponent;
-    private GameObject receiverObject;
-    private OSCReceiver receiverBowling;
-
-    private string inputIP;
-    private int inputPort;
+    private OSCReceiver receiver;
 
     // This is for the Bowling Ball
     private Transform bowlingPosition;
@@ -63,30 +57,20 @@ public class BowlingScript : MonoBehaviour
     private void InitializeReceiver()
     {
         // Set old receiver object and component
-        receiverObject = GameObject.Find("OSCReceiver");
-        receiverComponent = receiverObject.GetComponent<OSCReceiver>();
-        receiverComponent.enabled = false;
+        receiver = GameObject.Find("OSCReceiver").GetComponent<OSCReceiver>();
 
-        // Clear all binds
-        inputIP = receiverComponent.LocalHost;
-        inputPort = receiverComponent.LocalPort;
+        if (receiver == null)
+        {
+            SceneManager.LoadScene("Menu");
+        }
 
-        Destroy(receiverObject);
-        Debug.Log("Destroyed the old receiver.");
+        receiver.enabled = true;
 
-        receiverBowling = GameObject.Find("OSCReceiver Bowling").GetComponent<OSCReceiver>();
-        receiverBowling.LocalHostMode = OSCLocalHostMode.Custom;
-        receiverBowling.enabled = false;
+        Debug.Log($"Receiver is {receiver.LocalHost}:{receiver.LocalPort}");
 
-        receiverBowling.LocalHost = inputIP;
-        receiverBowling.LocalPort = inputPort;
-        Debug.Log($"Receiver is {receiverBowling.LocalHost}:{receiverBowling.LocalPort}");
-
-        receiverBowling.Bind("/gyro", OnReceive);
-        receiverBowling.Bind("/finish", message => ReleaseBall());
-        receiverBowling.enabled = true;
-
-
+        receiver.Bind("/gyro", OnReceive);
+        receiver.Bind("/finish", message => ReleaseBall());
+        receiver.enabled = true;
     }
 
     /// <summary>
@@ -114,7 +98,7 @@ public class BowlingScript : MonoBehaviour
         List<float> values = message.Values.Select(value => value.FloatValue).ToList();
 
         // Update last gyro data
-        attitude = new Vector3(values[0], values[1], values[2]);
+        attitude = new Vector3(values[0], 0, values[2]);
 
         // Save acceleration and rotation values
         rotationRate = new Quaternion(values[4], values[5], values[6], values[3]);

@@ -4,15 +4,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class SenderScript : MonoBehaviour
+public class Sender : MonoBehaviour
 {
     // Output port is the port that the input uses to send messages to
     private string outputIP = "";
     private int outputPort = 13574;
 
     private InputField ipInput;
-    private Text placeholder;
-
     private InputField portInput;
 
     private Text debug;
@@ -33,8 +31,6 @@ public class SenderScript : MonoBehaviour
         // Declare the input and text fields for the osc connection
         ipInput = GameObject.FindGameObjectWithTag("Input IP").GetComponent<InputField>();
         portInput = GameObject.FindGameObjectWithTag("Input Port").GetComponent<InputField>();
-
-        placeholder = ipInput.placeholder.GetComponent<Text>();
 
         // Declare the debug text field
         debug = GameObject.FindGameObjectWithTag("Debug").GetComponent<Text>();
@@ -98,8 +94,7 @@ public class SenderScript : MonoBehaviour
     /// </summary>
     private void ChangeScene()
     {
-        SceneManager.LoadScene("GyroScene");
-        DontDestroyOnLoad(transmitter);
+        SceneManager.LoadScene("Gyro");
     }
 
     /// <summary>

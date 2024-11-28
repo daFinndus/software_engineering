@@ -1,12 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class BallPush : MonoBehaviour
+public class Keyboard : MonoBehaviour
 {
     public float pushForce = 500f; 
     private Rigidbody rb;
-
     void Start()
     {
         rb = GetComponent<Rigidbody>();

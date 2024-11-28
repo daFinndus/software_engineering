@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class ReceiverScript : MonoBehaviour
+public class Receiver : MonoBehaviour
 {
     // Input port describes the port that the output uses to receive messages
     private int inputPort = 13575;
@@ -12,7 +12,6 @@ public class ReceiverScript : MonoBehaviour
     private Text portInput;
 
     private Text debug;
-    private Text messages;
 
     private OSCReceiver receiver;
 
@@ -35,7 +34,6 @@ public class ReceiverScript : MonoBehaviour
 
         // Declare the debug and osc message text field
         debug = GameObject.FindGameObjectWithTag("Debug").GetComponent<Text>();
-        messages = GameObject.FindGameObjectWithTag("Messages").GetComponent<Text>();
 
         Debug.Log("Declared all components successfully.");
     }
@@ -45,6 +43,8 @@ public class ReceiverScript : MonoBehaviour
     /// </summary>
     private void InitializeReceiver()
     {
+        receiver = gameObject.GetComponent<OSCReceiver>();
+
         receiver.enabled = false;
         receiver.LocalPort = inputPort;
 
@@ -78,13 +78,13 @@ public class ReceiverScript : MonoBehaviour
                 receiver.LocalPort = inputPort;
             }
 
-            ClearMessages();
             receiver.enabled = true;
 
             Debug.Log($"Listening on port: {receiver.LocalPort}");
         }
-        catch
+        catch (System.Exception e)
         {
+            Debug.Log($"Error occured: {e.Message}");
             HandleError("Error while connecting to the controller.");
         }
     }
@@ -96,7 +96,6 @@ public class ReceiverScript : MonoBehaviour
     protected void MessageReceived(OSCMessage message)
     {
         Debug.Log($"Received message for address: {message.Address}");
-        messages.text = message.ToString();
     }
 
     /// <summary>
@@ -116,8 +115,8 @@ public class ReceiverScript : MonoBehaviour
     /// </summary>
     private void ChangeScene()
     {
-        SceneManager.LoadScene("BowlingScene");
         DontDestroyOnLoad(receiver);
+        SceneManager.LoadScene("Game");
     }
 
     /// <summary>
@@ -147,13 +146,5 @@ public class ReceiverScript : MonoBehaviour
     {
         Debug.LogError(error);
         debug.text = error;
-    }
-
-    /// <summary> 
-    /// Clears the messages text field. 
-    /// </summary>
-    private void ClearMessages()
-    {
-        messages.text = string.Empty;
     }
 }

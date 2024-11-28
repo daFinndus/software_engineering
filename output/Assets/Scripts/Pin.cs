@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-public class PinScript : MonoBehaviour
+public class Pin : MonoBehaviour
 {
     // Threshold for the pin to be considered fallen
     public float fallThreshold = 45.0f;
@@ -32,14 +29,12 @@ public class PinScript : MonoBehaviour
             OnPinFall();
         }
     }
-
     private void OnPinFall()
     {
         Debug.Log($"{gameObject.name} is fallen!");
 
         ScoreManager.instance.AddPoints(1);
     }
-
     void OnCollisionEnter(Collision collision)
     {
         // Debug statement to check by what the pin was hit

@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/ConnectScene.unity
+    path: Assets/Scenes/Menu.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/BowlingScene.unity
+    path: Assets/Scenes/Game.unity
     guid: e5b71621283d0f14e80aed431ff5100c
   m_configObjects: {}
