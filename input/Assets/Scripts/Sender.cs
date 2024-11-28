@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Net;
 using extOSC;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class Sender : MonoBehaviour
     private InputField portInput;
 
     private Text debug;
+    private Text username;
 
     private OSCTransmitter transmitter;
 
@@ -28,22 +30,39 @@ public class Sender : MonoBehaviour
     /// </summary>
     private void DeclareComponents()
     {
-        // Declare the input and text fields for the osc connection
-        ipInput = GameObject.FindGameObjectWithTag("Input IP").GetComponent<InputField>();
-        portInput = GameObject.FindGameObjectWithTag("Input Port").GetComponent<InputField>();
+        try
+        {
+            // Declare the input and text fields for the osc connection
+            ipInput = GameObject.FindGameObjectWithTag("Input IP").GetComponent<InputField>();
+            portInput = GameObject.FindGameObjectWithTag("Input Port").GetComponent<InputField>();
 
-        // Declare the debug text field
-        debug = GameObject.FindGameObjectWithTag("Debug").GetComponent<Text>();
+            // Declare the name input field
+            username = GameObject.FindGameObjectWithTag("Input Name").GetComponent<Text>();
+
+            // Declare the debug text field
+            debug = GameObject.FindGameObjectWithTag("Debug").GetComponent<Text>();
+        }
+        catch (System.Exception e)
+        {
+            HandleError($"Error while declaring components: {e.Message}");
+        }
     }
 
     private void InitializeTransmitter()
     {
-        // Declare the transmitter for the osc connection
-        transmitter = GetComponent<extOSC.OSCTransmitter>();
+        try
+        {
+            // Declare the transmitter for the osc connection
+            transmitter = GetComponent<extOSC.OSCTransmitter>();
 
-        // This is to prevent conflict errors
-        transmitter.RemotePort = outputPort;
-        Debug.Log("Transmitter is sending to port: " + transmitter.RemotePort);
+            // This is to prevent conflict errors
+            transmitter.RemotePort = outputPort;
+            Debug.Log("Transmitter is sending to port: " + transmitter.RemotePort);
+        }
+        catch (System.Exception e)
+        {
+            HandleError($"Error while initializing transmitter: {e.Message}");
+        }
     }
 
     /// <summary>
@@ -54,6 +73,12 @@ public class Sender : MonoBehaviour
     {
         try
         {
+            if (string.IsNullOrEmpty(username.text))
+            {
+                HandleError("Please enter a valid name.");
+                return;
+            }
+
             if (string.IsNullOrEmpty(ipInput.text))
             {
                 HandleError("Please enter a valid IP address.");
@@ -75,16 +100,21 @@ public class Sender : MonoBehaviour
 
             Debug.Log($"Sending message to {outputIP}:{outputPort}");
 
-            OSCMessage message = new("/connect");
-            message.AddValue(OSCValue.String("Hello Output! Greetings, Input."));
-            transmitter.Send(message);
+            OSCMessage connectMessage = new("/connect");
+            connectMessage.AddValue(OSCValue.String("Hello Output! Greetings, Input."));
+
+            OSCMessage nameMessage = new("/username");
+            nameMessage.AddValue(OSCValue.String(username.text));
+
+            transmitter.Send(connectMessage);
+            transmitter.Send(nameMessage);
 
             // Wait for answer from input
             ChangeScene();
         }
-        catch
+        catch (System.Exception e)
         {
-            HandleError("Error while connecting to controller.");
+            HandleError($"Error while connecting to controller: {e.Message}");
         }
     }
 
@@ -95,6 +125,7 @@ public class Sender : MonoBehaviour
     private void ChangeScene()
     {
         DontDestroyOnLoad(transmitter);
+        DontDestroyOnLoad(username);
         SceneManager.LoadScene("Gyro");
     }
 

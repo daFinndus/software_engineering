@@ -9,6 +9,7 @@ TagManager:
   - Controller Port
   - Input IP
   - Input Port
+  - Input Name
   layers:
   - Default
   - TransparentFX

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using extOSC;
 
@@ -25,7 +26,9 @@ public class Bowling : MonoBehaviour
 
     // This is for the force and position calculation
     public float gyroMultiplier = 10f;
-    public float forceMultiplier = 0.5f;
+    public float forceMultiplier = 5f;
+
+    private Text username;
 
     public void Start()
     {
@@ -48,6 +51,8 @@ public class Bowling : MonoBehaviour
         {
             Debug.LogError("Bowling Rigidbody or Transform is not set!");
         }
+
+        username = GameObject.FindGameObjectWithTag("Name").GetComponent<Text>();
     }
 
     /// <summary>
@@ -69,6 +74,7 @@ public class Bowling : MonoBehaviour
         Debug.Log($"Receiver is {receiver.LocalHost}:{receiver.LocalPort}");
 
         receiver.Bind("/gyro", OnReceive);
+        receiver.Bind("/username", SetUsername);
         receiver.Bind("/finish", message => ReleaseBall());
         receiver.enabled = true;
     }
@@ -102,7 +108,7 @@ public class Bowling : MonoBehaviour
 
         // Save acceleration and rotation values
         rotationRate = new Quaternion(values[4], values[5], values[6], values[3]);
-        acceleration = new Vector3(values[9], 0, values[7]);
+        acceleration = new Vector3(values[9], values[8], values[7]);
 
         UpdatePosition();
     }
@@ -132,19 +138,22 @@ public class Bowling : MonoBehaviour
     {
         ballReleased = true;
 
-        // Translate acceleration to world space
-        Vector3 worldAcceleration = bowlingPosition.TransformDirection(acceleration);
+        // Calculate angular velocity with rotation rate and release force with acceleration
+        Vector3 angularVelocity = rotationRate.eulerAngles;
+        Vector3 releaseForce = acceleration;
+        releaseForce.x *= forceMultiplier;
 
         // Prüfe, ob die Wurfbewegung ausreichend ist
-        if (worldAcceleration.magnitude < 1f)
+        if (releaseForce.magnitude < 1f)
         {
             Debug.Log("Throw too weak, ignoring release.");
             return;
         }
 
-        // Calculate angular velocity with rotation rate and release force with acceleration
-        Vector3 angularVelocity = rotationRate.eulerAngles;
-        Vector3 releaseForce = worldAcceleration * forceMultiplier;
+        // Make sure the ball is thrown in the right direction
+        if (releaseForce.x < 0) {
+            releaseForce.x *= -1;
+        }
 
         bowlingRigidbody.isKinematic = false;
         bowlingRigidbody.AddForce(releaseForce, ForceMode.Impulse);
@@ -164,5 +173,10 @@ public class Bowling : MonoBehaviour
         bowlingPosition.SetPositionAndRotation(initialPosition, initialRotation);
 
         Debug.Log("Ball is reset!");
+    }
+
+    private void SetUsername(OSCMessage message)
+    {
+        username.text = "Name: " + message.Values[0].StringValue;
     }
 }

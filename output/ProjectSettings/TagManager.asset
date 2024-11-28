@@ -10,6 +10,7 @@ TagManager:
   - Debug
   - Bowling
   - Pin
+  - Name
   layers:
   - Default
   - TransparentFX
