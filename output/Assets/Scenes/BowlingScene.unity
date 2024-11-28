@@ -985,7 +985,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2645293466676665868, guid: d5e9522d32c5a374d97452de780b8c38, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -131.91
+      value: -130
       objectReference: {fileID: 0}
     - target: {fileID: 2645293466676665868, guid: d5e9522d32c5a374d97452de780b8c38, type: 3}
       propertyPath: m_LocalPosition.y
@@ -997,31 +997,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2645293466676665868, guid: d5e9522d32c5a374d97452de780b8c38, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.6587065
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2645293466676665868, guid: d5e9522d32c5a374d97452de780b8c38, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.07203683
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2645293466676665868, guid: d5e9522d32c5a374d97452de780b8c38, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.6596517
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2645293466676665868, guid: d5e9522d32c5a374d97452de780b8c38, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.3546493
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2645293466676665868, guid: d5e9522d32c5a374d97452de780b8c38, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -21.9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2645293466676665868, guid: d5e9522d32c5a374d97452de780b8c38, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 277.39
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2645293466676665868, guid: d5e9522d32c5a374d97452de780b8c38, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -37.3
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3327987327230053068, guid: d5e9522d32c5a374d97452de780b8c38, type: 3}
+      propertyPath: forceMultiplier
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1073,7 +1077,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2957983491877132228, guid: 1b09696aaf461d24891a61cdc6aabbff, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -109.07
+      value: -110
       objectReference: {fileID: 0}
     - target: {fileID: 2957983491877132228, guid: 1b09696aaf461d24891a61cdc6aabbff, type: 3}
       propertyPath: m_LocalPosition.y

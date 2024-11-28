@@ -118,7 +118,7 @@ public class BowlingScript : MonoBehaviour
 
         // Save acceleration and rotation values
         rotationRate = new Quaternion(values[4], values[5], values[6], values[3]);
-        acceleration = new Vector3(values[7], values[8], values[9]);
+        acceleration = new Vector3(values[9], 0, values[7]);
 
         UpdatePosition();
     }
@@ -130,13 +130,15 @@ public class BowlingScript : MonoBehaviour
     /// </summary>
     void UpdatePosition()
     {
+        if (!Application.isEditor) return; // Only use while debugging, could result in conflicts with the physics engine
+
         bowlingPosition.SetPositionAndRotation(new Vector3(
             initialPosition.x + attitude[0] * gyroMultiplier,
             initialPosition.y + attitude[1] * gyroMultiplier,
             initialPosition.z + attitude[2] * gyroMultiplier
         ), rotationRate);
 
-        Debug.Log($"Successfully updated the position of the ball to {bowlingPosition.position}!");
+        Debug.Log($"Debug Position updated to {bowlingPosition.position}");
     }
 
     /// <summary>
@@ -146,20 +148,25 @@ public class BowlingScript : MonoBehaviour
     {
         ballReleased = true;
 
-        // Calculate release force with acceleration
-        Vector3 releaseForce = acceleration * forceMultiplier;
+        // Translate acceleration to world space
+        Vector3 worldAcceleration = bowlingPosition.TransformDirection(acceleration);
 
-        // Calculate angular velocity with rotation rate
-        Vector3 angularVelocity = new Vector3(rotationRate.x, rotationRate.y, rotationRate.z) * gyroMultiplier;
+        // Prüfe, ob die Wurfbewegung ausreichend ist
+        if (worldAcceleration.magnitude < 1f)
+        {
+            Debug.Log("Throw too weak, ignoring release.");
+            return;
+        }
+
+        // Calculate angular velocity with rotation rate and release force with acceleration
+        Vector3 angularVelocity = rotationRate.eulerAngles;
+        Vector3 releaseForce = worldAcceleration * forceMultiplier;
 
         bowlingRigidbody.isKinematic = false;
         bowlingRigidbody.AddForce(releaseForce, ForceMode.Impulse);
         bowlingRigidbody.AddTorque(angularVelocity, ForceMode.Impulse);
 
-        Debug.Log($"Ball is released!");
-
-        Debug.Log($"Acceleration: {acceleration}, RotationRate: {rotationRate}");
-        Debug.Log($"Calculated Force: {releaseForce}, Angular Velocity: {angularVelocity}");
+        Debug.Log($"Ball released with force {releaseForce} and torque {angularVelocity}");
     }
 
     /// <summary>

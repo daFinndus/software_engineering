@@ -6,11 +6,7 @@ using UnityEngine.UI;
 
 public class SenderScript : MonoBehaviour
 {
-    // Input port describes the port that the input uses to receive messages
-    // Output port describes the port that the input uses to send messages to
-    private string inputIP = "";
-    private int inputPort = 13576;
-
+    // Output port is the port that the input uses to send messages to
     private string outputIP = "";
     private int outputPort = 13574;
 
@@ -19,19 +15,14 @@ public class SenderScript : MonoBehaviour
 
     private InputField portInput;
 
-    private InputField ipController;
-    private InputField portController;
-
     private Text debug;
 
     private OSCTransmitter transmitter;
-    private OSCReceiver receiver;
 
     public void Start()
     {
         DeclareComponents();
         InitializeTransmitter();
-        SetLocalIP();
     }
 
     /// <summary>
@@ -41,10 +32,9 @@ public class SenderScript : MonoBehaviour
     {
         // Declare the input and text fields for the osc connection
         ipInput = GameObject.FindGameObjectWithTag("Input IP").GetComponent<InputField>();
-        placeholder = ipInput.placeholder.GetComponent<Text>();
         portInput = GameObject.FindGameObjectWithTag("Input Port").GetComponent<InputField>();
-        ipController = GameObject.FindGameObjectWithTag("Controller IP").GetComponent<InputField>();
-        portController = GameObject.FindGameObjectWithTag("Controller Port").GetComponent<InputField>();
+
+        placeholder = ipInput.placeholder.GetComponent<Text>();
 
         // Declare the debug text field
         debug = GameObject.FindGameObjectWithTag("Debug").GetComponent<Text>();
@@ -52,41 +42,12 @@ public class SenderScript : MonoBehaviour
 
     private void InitializeTransmitter()
     {
-        // Declare the transmitter and receiver for the osc connection
+        // Declare the transmitter for the osc connection
         transmitter = GetComponent<extOSC.OSCTransmitter>();
-        receiver = GetComponent<extOSC.OSCReceiver>();
-        receiver.enabled = false;
-
-        // This has to be custom to set the local ip address
-        receiver.LocalHostMode = OSCLocalHostMode.Custom;
 
         // This is to prevent conflict errors
         transmitter.RemotePort = outputPort;
         Debug.Log("Transmitter is sending to port: " + transmitter.RemotePort);
-
-        receiver.LocalPort = inputPort;
-        Debug.Log("Receiver is listening on port: " + receiver.LocalPort);
-    }
-
-    private void SetLocalIP()
-    {
-        string ip = GetLocalIPAddress();
-
-        if (string.IsNullOrEmpty(ip))
-        {
-            placeholder.text = "No network adapters were found.";
-            inputIP = "";
-
-            receiver.LocalHost = "127.0.0.1";
-        }
-        else
-        {
-            placeholder.text = "This is your local ip: " + ip;
-            Debug.Log("Set input IP to: " + ip);
-            inputIP = ip;
-
-            receiver.LocalHost = ip;
-        }
     }
 
     /// <summary>
@@ -97,18 +58,18 @@ public class SenderScript : MonoBehaviour
     {
         try
         {
-            if (string.IsNullOrEmpty(ipController.text))
+            if (string.IsNullOrEmpty(ipInput.text))
             {
                 HandleError("Please enter a valid IP address.");
                 return;
             }
 
-            if (!string.IsNullOrEmpty(portController.text))
+            if (!string.IsNullOrEmpty(portInput.text))
             {
-                outputPort = int.Parse(portController.text);
+                outputPort = int.Parse(portInput.text);
             }
 
-            outputIP = ipController.text;
+            outputIP = ipInput.text;
 
             Debug.Log($"Connecting to {outputIP}:{outputPort}");
 
@@ -116,75 +77,18 @@ public class SenderScript : MonoBehaviour
             transmitter.RemotePort = outputPort;
             transmitter.Connect();
 
-            // Send initial message to connect to receiver
-            if (!string.IsNullOrEmpty(ipInput.text))
-            {
-                Debug.Log("Setting input IP to: " + ipInput.text);
-                inputIP = ipInput.text;
-                receiver.LocalHost = inputIP;
-            }
-
-            if (!string.IsNullOrEmpty(portInput.text))
-            {
-                Debug.Log("Setting input port to: " + portInput.text);
-                inputPort = int.Parse(portInput.text);
-                receiver.LocalPort = inputPort;
-            }
-
-            // Disable and re-enable the receiver to apply the new settings
-            receiver.enabled = false;
-            receiver.enabled = true;
-
             Debug.Log($"Sending message to {outputIP}:{outputPort}");
 
-            Debug.Log($"Sending message with input IP: {inputIP} and input port: {inputPort}");
             OSCMessage message = new("/connect");
-            message.AddValue(OSCValue.String(inputIP));
-            message.AddValue(OSCValue.Int(inputPort));
+            message.AddValue(OSCValue.String("Hello Output! Greetings, Input."));
             transmitter.Send(message);
 
             // Wait for answer from input
-            ConnectToOutput();
+            ChangeScene();
         }
         catch
         {
             HandleError("Error while connecting to controller.");
-        }
-    }
-
-    /// <summary>
-    /// This function is called when the system receives a message from the output.
-    /// </summary>
-    protected void Connect(OSCMessage message)
-    {
-        Debug.Log("Connection is initialized.");
-        receiver.enabled = false;
-
-        // Send initial message to start the game
-        message = new("/start");
-        message.AddValue(OSCValue.Int(0));
-        transmitter.Send(message);
-        Debug.Log($"Going to send {message}!");
-
-        ChangeScene();
-    }
-
-    /// <summary>
-    /// This function is called when the system receives a message from the output.
-    /// </summary>
-    private void ConnectToOutput()
-    {
-        try
-        {
-            receiver.enabled = true;
-            Debug.Log($"Listening on port: {receiver.LocalHost}:{receiver.LocalPort}");
-
-            // Generic listener for the connect address
-            receiver.Bind("/connect", Connect);
-        }
-        catch
-        {
-            HandleError("Error while connecting to output.");
         }
     }
 

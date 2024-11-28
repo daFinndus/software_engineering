@@ -318,7 +318,6 @@ GameObject:
   - component: {fileID: 364975935}
   - component: {fileID: 364975936}
   - component: {fileID: 364975937}
-  - component: {fileID: 364975938}
   m_Layer: 0
   m_Name: OSCReceiver
   m_TagString: Untagged
@@ -372,30 +371,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1259497cbd6479c48aa22fc297fb4a34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &364975938
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 364975933}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 464088183d2a1484ab8fb64e356c9f5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _autoConnect: 1
-  _closeOnPause: 0
-  _mapBundle: {fileID: 0}
-  _workInEditor: 0
-  _localHostMode: 0
-  _localPortMode: 2
-  _localReceiver: {fileID: 0}
-  _localHost: 192.168.0.103
-  _localPort: 7000
-  _remoteHost: 127.0.0.1
-  _remotePort: 7000
-  _useBundle: 0
 --- !u!1 &453799987
 GameObject:
   m_ObjectHideFlags: 0

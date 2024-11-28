@@ -11,16 +11,10 @@ public class ReceiverScript : MonoBehaviour
     private Text ipInput;
     private Text portInput;
 
-    private string outputIP;
-    private int outputPort;
-
-    private bool connected = false;
-
     private Text debug;
     private Text messages;
 
     private OSCReceiver receiver;
-    private OSCTransmitter transmitter;
 
 
     public void Start()
@@ -42,10 +36,6 @@ public class ReceiverScript : MonoBehaviour
         // Declare the debug and osc message text field
         debug = GameObject.FindGameObjectWithTag("Debug").GetComponent<Text>();
         messages = GameObject.FindGameObjectWithTag("Messages").GetComponent<Text>();
-
-        // Declare the transmitter and receiver for the osc connection
-        transmitter = gameObject.GetComponent<OSCTransmitter>();
-        receiver = gameObject.GetComponent<OSCReceiver>();
 
         Debug.Log("Declared all components successfully.");
     }
@@ -111,52 +101,13 @@ public class ReceiverScript : MonoBehaviour
 
     /// <summary>
     /// This function is called when the system receives the connect message from the controller.
+    /// After receiving the message, the scene is changed to the GyroScene.
     /// </summary>
     /// <param name="message">The osc message.</param>
     protected void Connect(OSCMessage message)
     {
         Debug.Log("Successfully connected to the controller.");
-
-        outputIP = message.Values[0].StringValue;
-        outputPort = message.Values[1].IntValue;
-
-        InitializeTransmitter();
-    }
-
-    /// <summary>
-    /// Initializes the transmitter for the osc connection and sends a message to the input.
-    /// </summary>
-    private void InitializeTransmitter()
-    {
-        transmitter.RemoteHost = outputIP;
-        transmitter.RemotePort = outputPort;
-        transmitter.Connect();
-
-        Debug.Log("Sending to input: " + transmitter.RemoteHost + ":" + transmitter.RemotePort);
-        transmitter.Send(new OSCMessage("/connect"));
-
-        transmitter.enabled = false;
-        StartCoroutine(WaitForInput());
-    }
-
-    /// <summary>
-    /// This function listens to /gyro messages from the input.
-    /// If it receives one it changes the scene to the GyroScene.
-    /// </summary>
-    /// <summary> Waits for /gyro messages to establish the connection. </summary>
-    private System.Collections.IEnumerator WaitForInput()
-    {
-        if (!connected)
-        {
-            receiver.Bind("/start", message =>
-            {
-                Debug.Log("Received the startup message.");
-                connected = true;
-
-                ChangeScene();
-            });
-            yield return null; // Wait for the next frame
-        }
+        ChangeScene();
     }
 
     /// <summary>
