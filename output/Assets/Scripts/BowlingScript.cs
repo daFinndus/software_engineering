@@ -112,7 +112,6 @@ public class BowlingScript : MonoBehaviour
     private void HandleGyro(OSCMessage message)
     {
         List<float> values = message.Values.Select(value => value.FloatValue).ToList();
-        Debug.Log("Successfully received gyro data and filled the list!");
 
         // Update last gyro data
         attitude = new Vector3(values[0], values[1], values[2]);
@@ -137,7 +136,7 @@ public class BowlingScript : MonoBehaviour
             initialPosition.z + attitude[2] * gyroMultiplier
         ), rotationRate);
 
-        Debug.Log("Successfully updated the position of the ball!");
+        Debug.Log($"Successfully updated the position of the ball to {bowlingPosition.position}!");
     }
 
     /// <summary>

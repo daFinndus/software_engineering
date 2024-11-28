@@ -48,7 +48,6 @@ public class GyroScript : MonoBehaviour
     {
         if (buttonPressed)
         {
-            Debug.Log("Button is pressed!");
             float[] values = GetGyro();
 
             OSCMessage message = new("/gyro");
