@@ -14,8 +14,9 @@ public class Sender : MonoBehaviour
     private InputField ipInput;
     private InputField portInput;
 
+    private InputField username;
+
     private Text debug;
-    private Text username;
 
     private OSCTransmitter transmitter;
 
@@ -37,7 +38,7 @@ public class Sender : MonoBehaviour
             portInput = GameObject.FindGameObjectWithTag("Input Port").GetComponent<InputField>();
 
             // Declare the name input field
-            username = GameObject.FindGameObjectWithTag("Input Name").GetComponent<Text>();
+            username = GameObject.FindGameObjectWithTag("Input Name").GetComponent<InputField>();
 
             // Declare the debug text field
             debug = GameObject.FindGameObjectWithTag("Debug").GetComponent<Text>();
@@ -106,8 +107,8 @@ public class Sender : MonoBehaviour
             OSCMessage nameMessage = new("/username");
             nameMessage.AddValue(OSCValue.String(username.text));
 
-            transmitter.Send(connectMessage);
             transmitter.Send(nameMessage);
+            transmitter.Send(connectMessage);
 
             // Wait for answer from input
             ChangeScene();
@@ -125,7 +126,6 @@ public class Sender : MonoBehaviour
     private void ChangeScene()
     {
         DontDestroyOnLoad(transmitter);
-        DontDestroyOnLoad(username);
         SceneManager.LoadScene("Gyro");
     }
 

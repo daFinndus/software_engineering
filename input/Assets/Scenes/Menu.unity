@@ -960,7 +960,7 @@ GameObject:
   - component: {fileID: 1215045000}
   m_Layer: 5
   m_Name: Name Input
-  m_TagString: Input IP
+  m_TagString: Input Name
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

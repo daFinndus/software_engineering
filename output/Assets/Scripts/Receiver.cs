@@ -13,6 +13,7 @@ public class Receiver : MonoBehaviour
     private Text portInput;
 
     private Text debug;
+    private Text username;
 
     private OSCReceiver receiver;
 
@@ -34,6 +35,7 @@ public class Receiver : MonoBehaviour
 
         // Declare the debug and osc message text field
         debug = GameObject.FindGameObjectWithTag("Debug").GetComponent<Text>();
+        username = gameObject.GetComponent<Text>();
 
         Debug.Log("Declared all components successfully.");
     }
@@ -51,6 +53,7 @@ public class Receiver : MonoBehaviour
         // Generic listener
         receiver.Bind("/*", MessageReceived);
         receiver.Bind("/connect", Connect);
+        receiver.Bind("/username", SetUsername);
 
         Debug.Log("The receiver is initialized.");
     }
@@ -136,6 +139,17 @@ public class Receiver : MonoBehaviour
         }
 
         throw new System.Exception("No network adapters with an IPv4 address in the system!");
+    }
+
+    /// <summary>
+    /// This function saves the username in the receiver object.
+    /// This is because I have no idea how to transfer variables across scenes.
+    /// </summary>
+    private void SetUsername(OSCMessage message)
+    {
+        string rawUsername = message.Values[0].ToString();
+        string cleanedUsername = rawUsername.Substring(rawUsername.IndexOf(":") + 2).TrimEnd('>');
+        username.text = cleanedUsername;
     }
 
     /// <summary>

@@ -34,6 +34,7 @@ public class Bowling : MonoBehaviour
     {
         InitializeReceiver();
         DeclareComponents();
+        SetUsername();
     }
 
     /// <summary>
@@ -74,7 +75,6 @@ public class Bowling : MonoBehaviour
         Debug.Log($"Receiver is {receiver.LocalHost}:{receiver.LocalPort}");
 
         receiver.Bind("/gyro", OnReceive);
-        receiver.Bind("/username", SetUsername);
         receiver.Bind("/finish", message => ReleaseBall());
         receiver.enabled = true;
     }
@@ -151,7 +151,8 @@ public class Bowling : MonoBehaviour
         }
 
         // Make sure the ball is thrown in the right direction
-        if (releaseForce.x < 0) {
+        if (releaseForce.x < 0)
+        {
             releaseForce.x *= -1;
         }
 
@@ -175,8 +176,8 @@ public class Bowling : MonoBehaviour
         Debug.Log("Ball is reset!");
     }
 
-    private void SetUsername(OSCMessage message)
+    private void SetUsername()
     {
-        username.text = "Name: " + message.Values[0].StringValue;
+        username.text = "Name: " + receiver.GetComponent<Text>().text;
     }
 }
